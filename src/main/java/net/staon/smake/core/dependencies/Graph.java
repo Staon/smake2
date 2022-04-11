@@ -1,82 +1,71 @@
 package net.staon.smake.core.dependencies;
 
-import com.google.common.collect.SortedMultiset;
-import com.google.common.collect.TreeMultiset;
-
 import java.util.*;
+import java.util.function.BiConsumer;
 
 /**
  * Generic dependency graph
- * <p>
- * The dependency graph contains nodes and oriented edges between them. The structure supports the algorithm
- * of "cutting leaves" - it's possible to ask for leaves and remove them from graph.
- * <p>
- * The graph implements tricolor semantics - it's possible to add new dependencies and new nodes while
- * the cutting leaves is in progress. White nodes are untouched (still out of progress), grey nodes
- * are currently in progress and black nodes are finished. New dependency can be added just from a white
- * node to any other node. Adding dependency from grey of black will cause an exception.
  *
- * @param <N> Type of data associated with graph nodes
+ * The dependency graph is simply an oriented graph. An oriented edge
+ * means that "source node of the edge is dependent on the target node".
+ * Inside smake code that usually means the target node must be processed
+ * prior the source node.
+ *
+ * @param <N> Type of data associated with graph's nodes
  */
 public class Graph<N> {
-  /* -- tri-color marking of the graph nodes */
-  private enum Color {
-    WHITE,
-    GREY,
-    BLACK,
+  /**
+   * Public interface of graph's node
+   */
+  public interface Node<N> {
+    /**
+     * Get data associated with the node
+     */
+    public N getData();
+  
+    /**
+     * Get out degree (number of out edges) of the node
+     */
+    public int getOutDegree();
   }
   
-  private class Node {
-    Color color;
+  private class NodeImpl implements Node<N> {
+    private final ID id;
     private final N data;
-    Set<Node> outs;
-    Set<Node> ins;
+    private Set<NodeImpl> outs;
+    private Set<NodeImpl> ins;
     
-    public Node(N data_) {
-      color = Color.WHITE;
+    public NodeImpl(ID id_, N data_) {
+      id = id_;
       data = data_;
+      outs = new HashSet<>();
+      ins = new HashSet<>();
+    }
+    
+    public void addOutEdge(NodeImpl target_node_) {
+      outs.add(target_node_);
+    }
+    
+    public void addInEdge(NodeImpl source_node_) {
+      ins.add(source_node_);
     }
     
     public N getData() {
       return data;
     }
-    
-    public N openNode() {
-      assert color == Color.WHITE;
-      
-      color = Color.GREY;
-      return data;
-    }
-    
-    public N closeNode() {
-      assert color == Color.GREY;
-      
-      color = Color.BLACK;
-      return data;
-    }
-    
-    public void addOutEdge(Node target_node_) {
-      outs.add(target_node_);
-    }
-    
-    public void addInEdge(Node source_node_) {
-      ins.add(source_node_);
-    }
-    
-    public int outDepSize() {
+  
+    public int getOutDegree() {
       return outs.size();
     }
   }
   
-  HashMap<ID, Node> nodes;
-  SortedMultiset<Node> nodes_out;
+  HashMap<ID, NodeImpl> nodes;
   
   /**
    * Ctor - empty graph
    */
   public Graph() {
     nodes = new HashMap<>();
-    nodes_out = TreeMultiset.create(Comparator.comparingInt(Node::outDepSize));
   }
   
   /**
@@ -89,11 +78,19 @@ public class Graph<N> {
     assert node_id_ != null;
     assert !nodes.containsKey(node_id_);
     
-    var node = new Node(node_data_);
+    var node = new NodeImpl(node_id_, node_data_);
     nodes.put(node_id_, node);
-    nodes_out.add(node);
   }
   
+  /**
+   * Add dependency between two nodes
+   *
+   * The method adds new dependency. If the dependency already exists
+   * nothing happens (i.e. the dependency is not doubled).
+   *
+   * @param from_ ID of the source node
+   * @param to_ ID of the target source
+   */
   public void addDependency(ID from_, ID to_) {
     var from_node_ = nodes.get(from_);
     assert from_node_ != null;
@@ -103,50 +100,26 @@ public class Graph<N> {
     /* -- create the graph edge */
     from_node_.addOutEdge(to_node_);
     to_node_.addInEdge(from_node_);
-    
-    /* -- recalculate position of the target node in the queue */
   }
   
   /**
-   * Open next graph leaf
-   * <p>
-   * The method removes first leaf from the priority queue and returns it. If there is no leaf in the queue
-   * the null is returned.
+   * Evaluate @a fn on every node in the graph
    *
-   * @return Data attached to the leaf node. Null if there is no leaf to be opened.
+   * @param fn The evaluation function
    */
-  public N openLeaf() {
-    var top_element_ = nodes_out.firstEntry();
-    if(top_element_ == null)  /* -- empty queue */
-      return null;
-    
-    /* -- check whether the node is a leaf */
-    var top_ = top_element_.getElement();
-    if(top_.outDepSize() > 0)
-      return null;
-    
-    /* -- remove from the queue and return stored node data */
-    var unused = nodes_out.pollFirstEntry();
-    return top_.openNode();
+  public void forEachNode(BiConsumer<ID, Node<N>> fn) {
+    nodes.forEach(fn);
   }
   
   /**
-   * Close currently opened leaf
+   * Evaluate a function on every predecessor of a node
    *
-   * @param node_id_ ID of the leaf. The leaf must be already opened by the openLeaf() method!
-   * @return Node data associated with the leaf.
+   * @param node_id_ ID of the node
+   * @param fn_ The function
    */
-  public N closeLeaf(ID node_id_) {
-    assert nodes.containsKey(node_id_);
-    
+  public void forEachPredecessor(ID node_id_, BiConsumer<ID, Node<N>> fn_) {
     var node_ = nodes.get(node_id_);
-    return node_.closeNode();
-  }
-  
-  /**
-   * Check whether the queue of nodes to be processed is empty
-   */
-  public boolean isQueueEmpty() {
-    return nodes_out.isEmpty();
+    assert node_ != null;
+    node_.ins.forEach((n_) -> { fn_.accept(n_.id, n_); });
   }
 }

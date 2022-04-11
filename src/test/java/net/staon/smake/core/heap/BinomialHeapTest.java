@@ -100,7 +100,7 @@ class BinomialHeapTest {
   
   @Test
   public void updateAllRevert() {
-    Heap<Item> heap_ = new BinomialHeap<Item>(Comparator.comparingInt(i -> i.value));
+    Heap<Item> heap_ = new BinomialHeap<>(Comparator.comparingInt(i -> i.value));
     
     var i1_ = new Item(6);
     var i2_ = new Item(5);
@@ -199,7 +199,7 @@ class BinomialHeapTest {
     }
     
     /* -- insert the items into the heap */
-    Heap<Item> heap_ = new BinomialHeap<Item>(Comparator.comparingInt(i -> i.value));
+    Heap<Item> heap_ = new BinomialHeap<>(Comparator.comparingInt(i -> i.value));
     for(var value_ : values_) {
       heap_.insert(value_);
     }
