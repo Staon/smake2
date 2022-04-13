@@ -65,7 +65,7 @@ public class TopologicalOrder<N> {
   
   public class OpenedLeaf {
     private Node node;
-    private N data;
+    private final N data;
     
     public OpenedLeaf(Node node_, N data_) {
       node = node_;

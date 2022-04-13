@@ -11,7 +11,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BinomialHeapTest {
-  private class Item {
+  private static class Item {
     public int value;
     public Item(int value_) {
       value = value_;
@@ -144,7 +144,7 @@ class BinomialHeapTest {
   
   @Test
   public void updateAllRevert2() {
-    Heap<Item> heap_ = new BinomialHeap<Item>(Comparator.comparingInt(i -> i.value));
+    var heap_ = new BinomialHeap<Item>(Comparator.comparingInt(i -> i.value));
     
     var i1_ = new Item(1);
     var i2_ = new Item(2);

@@ -21,12 +21,12 @@ public class Graph<N> {
     /**
      * Get data associated with the node
      */
-    public N getData();
+    N getData();
   
     /**
      * Get out degree (number of out edges) of the node
      */
-    public int getOutDegree();
+    int getOutDegree();
   }
   
   private class NodeImpl implements Node<N> {
@@ -136,6 +136,6 @@ public class Graph<N> {
   public void forEachPredecessor(ID node_id_, BiConsumer<ID, Node<N>> fn_) {
     var node_ = nodes.get(node_id_);
     assert node_ != null;
-    node_.ins.forEach((n_) -> { fn_.accept(n_.id, n_); });
+    node_.ins.forEach((n_) -> fn_.accept(n_.id, n_));
   }
 }
