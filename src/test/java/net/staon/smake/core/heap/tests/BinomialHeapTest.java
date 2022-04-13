@@ -1,8 +1,9 @@
-package net.staon.smake.core.heap;
+package net.staon.smake.core.heap.tests;
 
+import net.staon.smake.core.heap.BinomialHeap;
+import net.staon.smake.core.heap.Heap;
 import org.junit.jupiter.api.Test;
 
-import javax.management.openmbean.ArrayType;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Random;

@@ -3,10 +3,8 @@ package net.staon.smake.core.dependencies;
 import net.staon.smake.core.heap.BinomialHeap;
 import net.staon.smake.core.heap.Heap;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.nio.file.FileSystemException;
+import java.util.*;
 
 /**
  * Computation of the graph topological order
@@ -31,15 +29,15 @@ public class TopologicalOrder<N> {
     BLACK,
   }
   
-  private class Node {
+  private static class Node {
     public ID id;
     public Color color;
     public int out_degree;
   }
   
-  private Map<ID, Node> nodes;
-  private Heap<Node> nodes_heap;
-  private Set<Node> grey_nodes;
+  private final Map<ID, Node> nodes;
+  private final Heap<Node> nodes_heap;
+  private final Set<Node> grey_nodes;
   
   /**
    * Ctor
@@ -50,25 +48,28 @@ public class TopologicalOrder<N> {
     graph = graph_;
     nodes = new HashMap<>();
     nodes_heap = new BinomialHeap<>(Comparator.comparingInt(n -> n.out_degree));
+    grey_nodes = new HashSet<>();
     
     /* -- fill the heap */
-    graph.forEachNode((id_, node_) -> {
-      var to_node_ = new Node();
-      to_node_.id = id_;
-      to_node_.color = Color.WHITE;
-      to_node_.out_degree = node_.getOutDegree();
-      nodes.put(id_, to_node_);
-      nodes_heap.insert(to_node_);
-    });
+    graph.forEachNode(this::insertNewNode);
+  }
+  
+  private void insertNewNode(ID id_, Graph.Node<N> node_) {
+    var to_node_ = new Node();
+    to_node_.id = id_;
+    to_node_.color = Color.WHITE;
+    to_node_.out_degree = node_.getOutDegree();
+    nodes.put(id_, to_node_);
+    nodes_heap.insert(to_node_);
   }
   
   public class OpenedLeaf {
-    private TopologicalOrder<N> parent;
     private Node node;
+    private N data;
     
-    public OpenedLeaf(TopologicalOrder<N> parent_, Node node_) {
-      parent = parent_;
+    public OpenedLeaf(Node node_, N data_) {
       node = node_;
+      data = data_;
     }
   
     /**
@@ -78,25 +79,28 @@ public class TopologicalOrder<N> {
      * all predecessors.
      */
     public void closeLeaf() {
-      assert parent != null;
+      assert node != null;
       assert node.color == Color.GREY;
       
       node.color = Color.BLACK;
-      parent.grey_nodes.remove(node);
+      grey_nodes.remove(node);
 
       /* -- decrease out-order of all predecessors */
-      parent.graph.forEachPredecessor(node.id, (id_, node_) -> {
-        var pred = parent.nodes.get(id_);
+      graph.forEachPredecessor(node.id, (id_, node_) -> {
+        var pred = nodes.get(id_);
         assert pred != null && pred.color == Color.WHITE;
         
-        var p_node_ = parent.nodes.get(id_);
+        var p_node_ = nodes.get(id_);
         assert p_node_ != null;
         --p_node_.out_degree;
-        parent.nodes_heap.update(p_node_);
+        nodes_heap.update(p_node_);
       });
       
-      parent = null;
       node = null;
+    }
+    
+    public N getData() {
+      return data;
     }
   }
   
@@ -104,20 +108,83 @@ public class TopologicalOrder<N> {
    * Get a leaf from the graph
    *
    * @return The cut leaf or null if no leaf is available.
+   * @exception DependencyCycleException If dependency cycle is detected.
    */
-  public OpenedLeaf cutLeaf() {
+  public OpenedLeaf cutLeaf() throws DependencyCycleException {
+    if(nodes_heap.isEmpty())
+      return null;
+    
     var leaf = nodes_heap.getMin();
-    assert leaf.out_degree > 0;
-    if(leaf.out_degree == 1) {
+    assert leaf.out_degree >= 0;
+    if(leaf.out_degree == 0) {
       /* -- the node at the top of the heap is a leaf */
       nodes_heap.pollMin();  // -- remove from the heap
       leaf.color = Color.GREY;
       grey_nodes.add(leaf);
-      return new OpenedLeaf(this, leaf);
+      return new OpenedLeaf(leaf, graph.getNode(leaf.id).getData());
     }
     else {
-      /* -- TODO: detect cycle (the grey list is empty) */
+      if(grey_nodes.isEmpty()) {
+        /* -- There are no in-progress nodes but there is no leaf. A cycle
+         *    is detected. */
+        throw new DependencyCycleException();
+      }
       return null;
+    }
+  }
+  
+  /**
+   * Check that all nodes have been already cut
+   */
+  public boolean isEmpty() {
+    return nodes_heap.isEmpty() && grey_nodes.isEmpty();
+  }
+  
+  /**
+   * Append new node into the underlying graph
+   *
+   * Warning! This method modifies the underlying graph. Just one topological
+   * order object may exist if this method is used!
+   *
+   * @param node_id_ ID of the new node. It must be unique
+   * @param data_ Data associated with the node
+   */
+  public void addNode(ID node_id_, N data_) {
+    graph.addNode(node_id_, data_);
+    var g_node_ = graph.getNode(node_id_);
+    insertNewNode(node_id_, g_node_);
+  }
+  
+  /**
+   * Add new dependency into the graph
+   *
+   * This method adds a new dependency between two nodes. The source node
+   * must be WHITE as dependency cannot be added to an already processed
+   * or in-progress node.
+   *
+   * Warning! This method modifies the underlying graph. Just one topological
+   * order object may exist if this method is used!
+   *
+   * @param from_ ID of the dependency source node
+   * @param to_ ID of the dependency target node
+   */
+  public void addDependency(ID from_, ID to_) {
+    var to_from_ = nodes.get(from_);
+    assert to_from_ != null;
+    assert to_from_.color == Color.WHITE;
+    
+    var to_to_ = nodes.get(to_);
+    assert to_to_ != null;
+    
+    if(graph.addDependency(from_, to_)) {
+      /* -- The dependency is new. Increase out degree of the source node
+       *    only if the target source has not been processed yet - the degree
+       *    is decreased during closing of the target node. */
+      if(to_to_.color != Color.BLACK) {
+        ++to_from_.out_degree;
+        nodes_heap.update(to_from_);
+      }
+      
     }
   }
 }

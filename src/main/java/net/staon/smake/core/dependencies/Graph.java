@@ -32,8 +32,8 @@ public class Graph<N> {
   private class NodeImpl implements Node<N> {
     private final ID id;
     private final N data;
-    private Set<NodeImpl> outs;
-    private Set<NodeImpl> ins;
+    private final Set<NodeImpl> outs;
+    private final Set<NodeImpl> ins;
     
     public NodeImpl(ID id_, N data_) {
       id = id_;
@@ -42,8 +42,8 @@ public class Graph<N> {
       ins = new HashSet<>();
     }
     
-    public void addOutEdge(NodeImpl target_node_) {
-      outs.add(target_node_);
+    public boolean addOutEdge(NodeImpl target_node_) {
+      return outs.add(target_node_);
     }
     
     public void addInEdge(NodeImpl source_node_) {
@@ -90,16 +90,32 @@ public class Graph<N> {
    *
    * @param from_ ID of the source node
    * @param to_ ID of the target source
+   * @return true if the dependency has been newly added. False if the
+   *     dependency has already existed.
    */
-  public void addDependency(ID from_, ID to_) {
+  public boolean addDependency(ID from_, ID to_) {
+    assert from_ != to_;  /* -- loops are not allowed in the graph */
+    
     var from_node_ = nodes.get(from_);
     assert from_node_ != null;
     var to_node_ = nodes.get(to_);
     assert to_node_ != null;
     
     /* -- create the graph edge */
-    from_node_.addOutEdge(to_node_);
     to_node_.addInEdge(from_node_);
+    return from_node_.addOutEdge(to_node_);
+  }
+  
+  /**
+   * Get node
+   *
+   * @param node_id_ ID of the node. The node must exist!
+   * @return The data
+   */
+  public Node<N> getNode(ID node_id_) {
+    var node_ = nodes.get(node_id_);
+    assert node_ != null;
+    return node_;
   }
   
   /**
