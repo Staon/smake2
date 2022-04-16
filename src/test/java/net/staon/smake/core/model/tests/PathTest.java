@@ -18,7 +18,6 @@
  */
 package net.staon.smake.core.model.tests;
 
-import net.staon.smake.core.dependencies.ID;
 import net.staon.smake.core.model.InvalidPathException;
 import net.staon.smake.core.model.Path;
 import org.junit.jupiter.api.Test;
@@ -35,27 +34,22 @@ public class PathTest {
     var p1_ = new Path("main.cpp");
     assertFalse(p1_.isEmpty());
     assertEquals("main.cpp", p1_.asString());
-    assertEquals(new ID("main.cpp"), p1_.asGraphID());
     assertEquals("main.cpp", p1_.getBasename());
     assertEquals("cpp", p1_.getExtension());
     assertTrue(p1_.getBasedir().isEmpty());
     assertEquals("", p1_.getBasedir().asString());
-    assertEquals(new ID(""), p1_.getBasedir().asGraphID());
     
     var p2_ = new Path("src/main.cpp");
     assertFalse(p2_.isEmpty());
     assertEquals("src/main.cpp", p2_.asString());
-    assertEquals(new ID("src/main.cpp"), p2_.asGraphID());
     assertEquals("main.cpp", p2_.getBasename());
     assertEquals("cpp", p2_.getExtension());
     assertFalse(p2_.getBasedir().isEmpty());
     assertEquals("src", p2_.getBasedir().asString());
-    assertEquals(new ID("src"), p2_.getBasedir().asGraphID());
     assertEquals("src", p2_.getBasedir().getBasename());
     assertEquals("", p2_.getBasedir().getExtension());
     assertTrue(p2_.getBasedir().getBasedir().isEmpty());
     assertEquals("", p2_.getBasedir().getBasedir().asString());
-    assertEquals(new ID(""), p2_.getBasedir().getBasedir().asGraphID());
     
     assertThrowsExactly(InvalidPathException.class, ()->new Path("/src/main.cpp"));
     assertThrowsExactly(InvalidPathException.class, ()->new Path("src//main.cpp"));

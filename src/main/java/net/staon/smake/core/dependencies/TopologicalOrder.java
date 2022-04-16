@@ -21,7 +21,6 @@ package net.staon.smake.core.dependencies;
 import net.staon.smake.core.heap.BinomialHeap;
 import net.staon.smake.core.heap.Heap;
 
-import java.nio.file.FileSystemException;
 import java.util.*;
 
 /**
@@ -159,6 +158,13 @@ public class TopologicalOrder<N> {
   }
   
   /**
+   * Check whether a node exists in the graph
+   */
+  public boolean containsNode(ID node_id_) {
+    return graph.containsNode(node_id_);
+  }
+  
+  /**
    * Append new node into the underlying graph
    *
    * Warning! This method modifies the underlying graph. Just one topological
@@ -186,7 +192,7 @@ public class TopologicalOrder<N> {
    * @param from_ ID of the dependency source node
    * @param to_ ID of the dependency target node
    */
-  public void addDependency(ID from_, ID to_) {
+  public boolean addDependency(ID from_, ID to_) {
     var to_from_ = nodes.get(from_);
     assert to_from_ != null;
     assert to_from_.color == Color.WHITE;
@@ -203,6 +209,10 @@ public class TopologicalOrder<N> {
         nodes_heap.update(to_from_);
       }
       
+      return true;
+    }
+    else {
+      return false;
     }
   }
 }

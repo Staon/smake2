@@ -28,10 +28,11 @@ import java.util.Objects;
  * Generic path of a resource
  *
  * This class implements a generic resource path. Each smake resource
- * is identified by a unique path. Smake paths are relative to the project,
- * they are unique inside a project, and they are case-sensitive. They don't
- * represent any filesystem path, but mostly they can be simply mapped
- * to the filesystem.
+ * is identified by a resource type and a unique path in the type namespace.
+ *
+ * Smake paths are relative to the project, they are unique inside a project,
+ * and they are case-sensitive. Generally, they don't represent filesystem
+ * paths, but mostly they can be simply mapped to.
  */
 public final class Path {
   private final List<String> path;
@@ -140,13 +141,6 @@ public final class Path {
     if(path == null)
       return "";
     return String.join("/", path);
-  }
-  
-  /**
-   * Convert path into the Graph ID (used by the resource map)
-   */
-  public ID asGraphID() {
-    return new ID(asString());
   }
   
   /**

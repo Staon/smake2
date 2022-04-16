@@ -87,10 +87,18 @@ public class Graph<N> {
   }
   
   /**
+   * Check whether a node is present in the graph
+   */
+  public boolean containsNode(ID node_id_) {
+    return nodes.get(node_id_) != null;
+  }
+  
+  /**
    * Add new node into the graph
    *
-   * @param node_id_   Identifier of the new node. The node must not exist yet!
-   * @param node_data_ Generic data stored with the node
+   * @param node_id_ ID of the node. The node must not be present in the graph
+   *                 yet!
+   * @param node_data_ Data associated with the new node.
    */
   public void addNode(ID node_id_, N node_data_) {
     assert node_id_ != null;
@@ -101,15 +109,15 @@ public class Graph<N> {
   }
   
   /**
-   * Add dependency between two nodes
+   * Add new dependency
    *
-   * The method adds new dependency. If the dependency already exists
+   * This method adds new dependency. If the dependency already exists
    * nothing happens (i.e. the dependency is not doubled).
    *
    * @param from_ ID of the source node
-   * @param to_ ID of the target source
-   * @return true if the dependency has been newly added. False if the
-   *     dependency has already existed.
+   * @param to_ ID of the target node
+   * @return True if the dependency has been newly added. False if it
+   *     has already existed.
    */
   public boolean addDependency(ID from_, ID to_) {
     assert from_ != to_;  /* -- loops are not allowed in the graph */
