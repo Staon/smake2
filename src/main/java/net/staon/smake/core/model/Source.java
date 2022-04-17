@@ -18,62 +18,36 @@
  */
 package net.staon.smake.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Smake artefact (e.g. a library, an executable)
+ * Source file of an artifact
  */
-public class Artefact implements ProjectPart {
-  private final String name;
-  private final String type;
-  private final List<Source> sources;
+public class Source implements ModelNode {
+  private final Path path;
   
   /**
    * Ctor
    *
-   * @param name_ Name of the artefact
-   * @param type_ Type of the artefact
+   * @param path_ Source path relative to the project root
    */
-  public Artefact(String name_, String type_) {
-    name = name_;
-    type = type_;
-    sources = new ArrayList<>();
+  public Source(Path path_) {
+    assert path_ != null;
+    path = path_;
   }
   
   /**
-   * Get artefact name
+   * Get source path
    */
-  public String getName() {
-    return name;
-  }
-  
-  /**
-   * Get artefact type
-   */
-  public String getType() {
-    return type;
-  }
-  
-  /**
-   * Append new artefact source
-   *
-   * @param source_ The source
-   */
-  public void addSource(Source source_) {
-    assert source_ != null;
-    sources.add(source_);
+  public Path getPath() {
+    return path;
   }
   
   @Override
   public void apply(Visitor visitor_) throws Throwable {
-    visitor_.visitArtefact(this);
+    visitor_.visitSource(this);
   }
   
   @Override
   public void applyChildren(Visitor visitor_) throws Throwable {
-    for(var source_ : sources) {
-      source_.apply(visitor_);
-    }
+    /* -- nothing to do, no children */
   }
 }

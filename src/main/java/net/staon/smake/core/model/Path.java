@@ -18,8 +18,6 @@
  */
 package net.staon.smake.core.model;
 
-import net.staon.smake.core.dependencies.ID;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

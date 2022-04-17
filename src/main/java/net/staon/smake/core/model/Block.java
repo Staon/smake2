@@ -18,62 +18,38 @@
  */
 package net.staon.smake.core.model;
 
+import net.staon.smake.core.execution.ProductReference;
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Smake artefact (e.g. a library, an executable)
+ * Representation of a block inside a project
+ *
+ * Block is a new layer of resolver context - new layer of resolvers, new
+ * layer of compilation profiles. A block is automatically opened for
+ * subdirectory, but it can be opened manually in the SMakeFile.
  */
-public class Artefact implements ProjectPart {
-  private final String name;
-  private final String type;
-  private final List<Source> sources;
+public class Block implements ProjectPart {
+  private final List<ProjectPart> children;
   
   /**
    * Ctor
-   *
-   * @param name_ Name of the artefact
-   * @param type_ Type of the artefact
    */
-  public Artefact(String name_, String type_) {
-    name = name_;
-    type = type_;
-    sources = new ArrayList<>();
-  }
-  
-  /**
-   * Get artefact name
-   */
-  public String getName() {
-    return name;
-  }
-  
-  /**
-   * Get artefact type
-   */
-  public String getType() {
-    return type;
-  }
-  
-  /**
-   * Append new artefact source
-   *
-   * @param source_ The source
-   */
-  public void addSource(Source source_) {
-    assert source_ != null;
-    sources.add(source_);
+  public Block() {
+    children = new ArrayList<>();
   }
   
   @Override
   public void apply(Visitor visitor_) throws Throwable {
-    visitor_.visitArtefact(this);
+    visitor_.visitBlock(this);
   }
   
   @Override
   public void applyChildren(Visitor visitor_) throws Throwable {
-    for(var source_ : sources) {
-      source_.apply(visitor_);
+    for(var child_ : children) {
+      child_.apply(visitor_);
     }
   }
 }

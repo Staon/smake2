@@ -79,7 +79,7 @@ public class ProjectBuilder {
       throw new DuplicatedSourceException(project, artefact, path_);
     }
     
-    artefact.addSource(path_);
+    artefact.addSource(new Source(path_));
     sources.add(path_);
   }
   

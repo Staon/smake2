@@ -18,7 +18,6 @@
  */
 package net.staon.smake.core.execution;
 
-import net.staon.smake.core.execution.Resource;
 import net.staon.smake.core.model.Artefact;
 
 /**

@@ -21,10 +21,8 @@ package net.staon.smake.core.resolver;
 import net.staon.smake.core.execution.*;
 import net.staon.smake.core.model.*;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * Context of the resolving process
@@ -34,8 +32,84 @@ public class ResolverContext {
   private ResourceMapManipulator resource_map;
   private Project project;
   private Artefact artefact;
+  private ProductReference product_ref;
   private List<ProductReference> products;
-  private Queue<Resource> resource_queue;
+  private ResourceQueue resource_queue;
+  
+  private class ResolverVisitor implements Visitor {
+    @Override
+    public void visitProject(Project project_) throws Throwable {
+      assert project == null && project_ != null;
+      
+      try {
+        project = project_;
+        products = new ArrayList<>();
+        resource_queue = new ResourceQueue();
+        
+        /* -- visit project children (mainly artefacts) */
+        project_.applyChildren(this);
+        
+        /* -- insert all product resources */
+        for(var ref_ : products) {
+          insertUniqueResource(ref_.getResource());
+        }
+        
+        /* -- resolve all resources */
+        while(!resource_queue.isEmpty()) {
+          var resource_ = resource_queue.popResource();
+          resolvers.resolveResource(ResolverContext.this, resource_);
+        }
+      }
+      finally {
+        resource_queue = null;
+        products = null;
+        artefact = null;
+        project = null;
+      }
+    }
+    private ResolverVisitor visitor;
+  
+    @Override
+    public void visitBlock(Block block_) throws Throwable {
+      /* -- TODO: open new resolver layer */
+      
+      block_.applyChildren(this);
+    }
+  
+    @Override
+    public void visitArtefact(Artefact artefact_) throws Throwable {
+      assert project != null && artefact == null && artefact_ != null;
+      
+      try {
+        artefact = artefact_;
+        
+        /* -- resolve the artefact - children of the artefact are
+         *    iterated for each artefact product. */
+        resolvers.resolveArtefact(ResolverContext.this, artefact);
+      }
+      finally {
+        artefact = null;
+      }
+      
+    }
+
+    @Override
+    public void visitSource(Source source_) throws Throwable {
+      assert project != null && artefact != null && product_ref != null;
+      
+      var resource_ = new ResourceSource(source_.getPath());
+      
+      /* -- source resources may be shared by several artefacts or
+       *    artefact products. */
+      var actual_ = resource_map.getResource(resource_.getID());
+      if(actual_ == null) {
+        insertResource(resource_);
+        actual_ = resource_;
+      }
+      actual_.attachWithProduct(product_ref);
+    }
+  }
+  private final ResolverVisitor visitor;
   
   /**
    * Ctor
@@ -54,12 +128,14 @@ public class ResolverContext {
     /* -- current state of resolving */
     project = null;
     artefact = null;
+    product_ref = null;
     products = null;
     resource_queue = null;
+    visitor = new ResolverVisitor();
   }
   
   private void insertResource(Resource resource_) {
-    resource_queue.add(resource_);
+    resource_queue.pushResource(resource_);
     resource_map.addResource(resource_);
   }
   
@@ -78,42 +154,7 @@ public class ResolverContext {
    */
   public void resolveProject(Project project_) throws Throwable {
     assert project == null && project_ != null;
-    
-    try {
-      project = project_;
-      products = new ArrayList<>();
-      resource_queue = new ArrayDeque<>();
-
-      /* -- initialize by source resources */
-      for(var artefact_ : project_.getArtefacts()) {
-        openArtefact(artefact_);
-        closeArtefact(artefact_);
-      }
-      
-      /* -- insert all product resources */
-      for(var ref_ : products) {
-        insertUniqueResource(ref_.getResource());
-      }
-  
-      /* -- resolve all resources */
-      while(!resource_queue.isEmpty()) {
-        var resource_ = resource_queue.poll();
-        resolvers.resolveResource(this, resource_);
-      }
-    }
-    finally {
-      resource_queue = null;
-      products = null;
-      artefact = null;
-      project = null;
-    }
-  }
-  
-  private void openArtefact(Artefact artefact_) throws Throwable {
-    assert project != null && artefact == null && artefact_ != null;
-    
-    artefact = artefact_;
-    resolvers.resolveArtefact(this, artefact);
+    project_.apply(visitor);
   }
   
   /**
@@ -124,35 +165,24 @@ public class ResolverContext {
    */
   public void registerArtefactProduct(
       String product_type_,
-      Resource product_resource_) throws DuplicatedResourceException {
-    assert project != null && artefact != null;
+      Resource product_resource_) throws Throwable {
+    assert project != null && artefact != null && product_ref == null;
   
-    var product_ref_ = new ProductReference(
-        artefact, product_type_, product_resource_);
+    try {
+      product_ref = new ProductReference(
+          artefact, product_type_, product_resource_);
   
-    /* -- Postpone insertion of product resources after all sources.
-     *    Hence, we can check that the production resource is not
-     *    duplicated in sources. */
-    products.add(product_ref_);
-    
-    /* -- now add all source files attached to the product resource */
-    for(var source_ : artefact.getSources()) {
-      var resource_ = new ResourceSource(source_);
-    
-      /* -- source resources may be shared by several artefacts or
-       *    artefact products. */
-      var actual_ = resource_map.getResource(resource_.getID());
-      if(actual_ == null) {
-        insertResource(resource_);
-        actual_ = resource_;
-      }
-      actual_.attachWithProduct(product_ref_);
+      /* -- Postpone insertion of product resources after all sources.
+       *    Hence, we can check that the production resource is not
+       *    duplicated in sources. */
+      products.add(product_ref);
+  
+      /* -- iterate artefact content */
+      artefact.applyChildren(visitor);
     }
-  }
-  
-  private void closeArtefact(Artefact artefact_) {
-    assert project != null && artefact != null && artefact == artefact_;
-    artefact = null;
+    finally {
+      product_ref = null;
+    }
   }
   
   /**

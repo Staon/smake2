@@ -20,7 +20,6 @@ package net.staon.smake.core.resolver;
 
 import net.staon.smake.core.execution.Resource;
 import net.staon.smake.core.model.Artefact;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.*;
 
@@ -28,6 +27,7 @@ import java.util.*;
  * Stacks of configured resolvers
  */
 public class ResolverStack {
+  
   private final Deque<List<ArtefactResolver>> artefact_resolvers;
   private final Deque<List<ResourceResolver>> resource_resolvers;
   

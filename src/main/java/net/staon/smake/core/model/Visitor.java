@@ -18,51 +18,35 @@
  */
 package net.staon.smake.core.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Representation of one smake project
+ * Visitor of the model structure
  */
-public class Project implements ModelNode {
-  private String name;
-  private final List<ProjectPart> children;
-  
-  
+public interface Visitor {
   /**
-   * Ctor
-   *
-   * @param name_ Name of the project
+   * Visit Project node
    */
-  public Project(String name_) {
-    name = name_;
-    children = new ArrayList<>();
+  default void visitProject(Project project_) throws Throwable {
+  
   }
   
   /**
-   * Get project name
+   * Visit block node
    */
-  public String getName() {
-    return name;
+  default void visitBlock(Block block_) throws Throwable {
+  
   }
   
   /**
-   * Append new child
+   * Visit artefact node
    */
-  public void addChild(ProjectPart child_) {
-    assert child_ != null;
-    children.add(child_);
+  default void visitArtefact(Artefact artefact_) throws Throwable {
+  
   }
   
-  @Override
-  public void apply(Visitor visitor_) throws Throwable {
-    visitor_.visitProject(this);
-  }
-
-  @Override
-  public void applyChildren(Visitor visitor_) throws Throwable {
-    for(var child_ : children) {
-      child_.apply(visitor_);
-    }
+  /**
+   * Visit artefact source
+   */
+  default void visitSource(Source source_) throws Throwable {
+  
   }
 }
