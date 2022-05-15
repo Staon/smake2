@@ -28,7 +28,11 @@ import java.util.List;
  * Context of the resolving process
  */
 public class ResolverContext {
-  ResolverStack resolvers;
+  public static final String SOURCE_TYPE = "smake::source";
+  public static final String TARGET_TYPE = "smake::target";
+  public static final String UNKNOWN_CONTENT = "smake::unknown_content";
+  
+  Resolver resolvers;
   private ResourceMapManipulator resource_map;
   private Project project;
   private Artefact artefact;
@@ -97,7 +101,7 @@ public class ResolverContext {
     public void visitSource(Source source_) throws Throwable {
       assert project != null && artefact != null && product_ref != null;
       
-      var resource_ = new ResourceSource(source_.getPath());
+      var resource_ = createSourceResource(source_.getPath());
       
       /* -- source resources may be shared by several artefacts or
        *    artefact products. */
@@ -106,7 +110,7 @@ public class ResolverContext {
         insertResource(resource_);
         actual_ = resource_;
       }
-      actual_.attachWithProduct(product_ref);
+      /* -- TODO: attach to product */
     }
   }
   private final ResolverVisitor visitor;
@@ -118,7 +122,7 @@ public class ResolverContext {
    * @param resource_map_ Resource map of the project
    */
   public ResolverContext(
-      ResolverStack resolvers_,
+      Resolver resolvers_,
       ResourceMapManipulator resource_map_) {
     assert resolvers_ != null && resource_map_ != null;
   
@@ -132,6 +136,21 @@ public class ResolverContext {
     products = null;
     resource_queue = null;
     visitor = new ResolverVisitor();
+  }
+  
+  private Resource createSourceResource(Path path_) {
+    return new ResourcePhysical(SOURCE_TYPE, path_, UNKNOWN_CONTENT);
+  }
+  
+  /**
+   * Create new target physical resource (used by resolvers)
+   *
+   * @param path_ Path of the resource
+   * @param content_type_ Content type of the target resource
+   * @return The resource
+   */
+  public Resource createTargetResource(Path path_, String content_type_) {
+    return new ResourcePhysical(TARGET_TYPE, path_, content_type_);
   }
   
   private void insertResource(Resource resource_) {
@@ -197,6 +216,6 @@ public class ResolverContext {
     assert resolved_ != null && new_resource_ != null;
     
     insertUniqueResource(new_resource_);
-    new_resource_.attachWithSameProduct(resolved_);
+    /* TODO: attach with the product resource */
   }
 }

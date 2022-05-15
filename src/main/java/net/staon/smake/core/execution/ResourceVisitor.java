@@ -18,36 +18,15 @@
  */
 package net.staon.smake.core.execution;
 
-import net.staon.smake.core.model.Path;
-
 /**
- * A target resource
- *
- * Smake's target resource is any resource which is a result of an execution
- * task. Typically, a target resource is a compiled object file, linked
- * executable or composed library archive. However, even generated language
- * source files are smake targets too.
+ * Visitor of resource objects
  */
-public class ResourceTarget extends Resource {
-  private final Path path;
+public interface ResourceVisitor {
+  default void visit(Resource resource_) {
   
-  /**
-   * Ctor
-   *
-   * @param path_ The resource path
-   */
-  public ResourceTarget(Path path_) {
-    assert path_ != null;
-    path = path_;
   }
   
-  @Override
-  public String getType() {
-    return "smake::target";
-  }
+  default void visit(ResourceFile resource_) {
   
-  @Override
-  public Path getPath() {
-    return path;
   }
 }

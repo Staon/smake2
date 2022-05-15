@@ -29,7 +29,6 @@ public interface ResourceResolver {
    *
    * @param context_ Resolver context
    * @param resource_ The resource
-   * @return True if the resource is resolved
    */
-  boolean resolveResource(ResolverContext context_, Resource resource_);
+  void resolveResource(ResolverContext context_, Resource resource_);
 }

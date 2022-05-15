@@ -19,30 +19,20 @@
 package net.staon.smake.core.execution;
 
 /**
- * Generic smake resource
+ * A resource representing a real file
  *
- * A resource is an abstraction representing mostly source and generated
- * files. However, they can represent just a virtual resources, e.g.
- * exported and imported files (they are just project interface, physical
- * file is represented by another resource).
- *
- * A resource is uniquely identified by the pair (type, path). That's it,
- * there can be resources with the same path but different type. E.g.
- * exported and physical resources can have the same path.
- *
- * A note: generic resource is not attached to an artefact as imported
- * and exported resources are global for entire project (e.g. headers are
- * installed for entire project).
+ * A file resource can be converted to filesystem path. And it keeps a content
+ * type - e.g. C++ source, Fortran source etc.
  */
-public interface Resource {
+public interface ResourceFile extends Resource {
   /**
-   * Get ID of the resource (pair [resource type, resource path])
+   * Get content type
    */
-  ResourceID getID();
+  public String getContentType();
   
-  /**
-   * Apply a visitor on this resource
-   */
+  /* -- TODO: add the conversion to filesystem path */
+  
+  @Override
   default void apply(ResourceVisitor visitor_) {
     visitor_.visit(this);
   }

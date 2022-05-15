@@ -26,7 +26,7 @@ public class DuplicatedResourceException extends Exception {
       Project project_, Resource resource_) {
     super(String.format(
         "Resource %s is duplicated in the project %s",
-        resource_.getPath(),
+        resource_.getID(),
         project_.getName()));
   }
 }

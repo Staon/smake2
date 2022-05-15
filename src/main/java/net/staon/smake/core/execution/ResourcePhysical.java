@@ -21,34 +21,33 @@ package net.staon.smake.core.execution;
 import net.staon.smake.core.model.Path;
 
 /**
- * A source resource
- *
- * A source resource represents an existing file in the filesystem (e.g.
- * a C++ source file written by the programmer). Don't be confused with
- * language source file and smake source files - a generated language
- * source file is not the smake source file (it's a target file as it's
- * generated).
+ * Implementation of a file resource
  */
-public class ResourceSource extends Resource {
-  private final Path path;
+public class ResourcePhysical implements ResourceFile {
+  private final String resource_type;
+  private final Path resource_path;
+  private final String content_type;
   
   /**
    * Ctor
    *
-   * @param path_ Resource path
+   * @param type_ Type of the resource (e.g. smake::source, smake::target)
+   * @param path_ Smake path of the resource
+   * @param content_ Content type of the resource (e.g. smake::c++)
    */
-  public ResourceSource(Path path_) {
-    assert path_ != null;
-    path = path_;
+  public ResourcePhysical(String type_, Path path_, String content_) {
+    resource_type = type_;
+    resource_path = path_;
+    content_type = content_;
   }
   
   @Override
-  public String getType() {
-    return "smake::source";
+  public final ResourceID getID() {
+    return new ResourceID(resource_type, resource_path);
   }
   
   @Override
-  public Path getPath() {
-    return path;
+  public final String getContentType() {
+    return content_type;
   }
 }

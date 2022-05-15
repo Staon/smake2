@@ -32,7 +32,6 @@ public interface ArtefactResolver {
    *
    * @param context_ Resolver context
    * @param artefact_ The artefact
-   * @return True if the artefact has been resolved.
    */
-  boolean resolveArtefact(ResolverContext context_, Artefact artefact_);
+  void resolveArtefact(ResolverContext context_, Artefact artefact_);
 }
