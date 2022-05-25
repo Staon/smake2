@@ -40,6 +40,18 @@ public class ResolverContext {
   private List<ProductReference> products;
   private ResourceQueue resource_queue;
   
+  private class ResolverLayerGuard implements AutoCloseable {
+    public ResolverLayerGuard(
+        ResourceResolverLayer layer_) {
+      resolvers.openResourceResolverLayer(layer_);
+    }
+  
+    @Override
+    public void close() throws Exception {
+      resolvers.closeResourceResolverLayer();
+    }
+  }
+  
   private class ResolverVisitor implements Visitor {
     @Override
     public void visitProject(Project project_) throws Throwable {
@@ -75,9 +87,10 @@ public class ResolverContext {
   
     @Override
     public void visitBlock(Block block_) throws Throwable {
-      /* -- TODO: open new resolver layer */
-      
-      block_.applyChildren(this);
+      try(var ignored = new ResolverLayerGuard(
+          new ResourceResolverLayerSimple())) {
+        block_.applyChildren(this);
+      }
     }
   
     @Override
