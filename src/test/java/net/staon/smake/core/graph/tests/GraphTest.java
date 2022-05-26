@@ -18,10 +18,7 @@
  */
 package net.staon.smake.core.graph.tests;
 
-import net.staon.smake.core.dependencies.DependencyCycleException;
-import net.staon.smake.core.dependencies.Graph;
-import net.staon.smake.core.dependencies.ID;
-import net.staon.smake.core.dependencies.TopologicalOrder;
+import net.staon.smake.core.dependencies.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -33,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GraphTest {
   @Test
   public void topologicalOrderSimple() throws DependencyCycleException {
-    var graph_ = new Graph<String>();
+    Graph<String> graph_ = new GraphFull<>();
     
     var id1_ = new ID("1");
     var id2_ = new ID("2");
@@ -137,7 +134,7 @@ public class GraphTest {
   
   @Test
   public void topologicalOrderSimple2() throws DependencyCycleException {
-    var graph_ = new Graph<String>();
+    Graph<String> graph_ = new GraphFull<>();
     
     var id1_ = new ID("1");
     var id2_ = new ID("2");
@@ -258,7 +255,7 @@ public class GraphTest {
   
   @Test
   public void topologicalOrderCycle() throws DependencyCycleException {
-    var graph_ = new Graph<String>();
+    Graph<String> graph_ = new GraphFull<>();
   
     var id1_ = new ID("1");
     var id2_ = new ID("2");
@@ -303,7 +300,7 @@ public class GraphTest {
   
   @Test
   public void topologicalOrderDynamic() throws DependencyCycleException {
-    var graph_ = new Graph<String>();
+    Graph<String> graph_ = new GraphFull<>();
   
     var id1_ = new ID("1");
     var id2_ = new ID("2");
@@ -399,7 +396,7 @@ public class GraphTest {
   public void randomTest() throws DependencyCycleException {
     final int TEST_SIZE = 1000;
     
-    var graph_ = new Graph<String>();
+    Graph<String> graph_ = new GraphFull<>();
 
     /* -- generate node IDs and nodes */
     var ids_ = new ArrayList<ID>();

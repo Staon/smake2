@@ -71,7 +71,7 @@ public class TopologicalOrder<N> {
     graph.forEachNode(this::insertNewNode);
   }
   
-  private void insertNewNode(ID id_, Graph.Node<N> node_) {
+  private void insertNewNode(ID id_, GraphFull.Node<N> node_) {
     var to_node_ = new Node();
     to_node_.id = id_;
     to_node_.color = Color.WHITE;

@@ -18,7 +18,7 @@
  */
 package net.staon.smake.core.execution;
 
-import net.staon.smake.core.dependencies.Graph;
+import net.staon.smake.core.dependencies.GraphFull;
 import net.staon.smake.core.dependencies.TopologicalOrder;
 
 import java.util.HashMap;
@@ -29,14 +29,14 @@ import java.util.Map;
  */
 public class ResourceMap implements ResourceMapManipulator {
   private final Map<ResourceID, Resource> resources;
-  private final Graph<Resource> resource_deps;
+  private final GraphFull<Resource> resource_deps;
   
   /**
    * Ctor
    */
   public ResourceMap() {
     resources = new HashMap<>();
-    resource_deps = new Graph<>();
+    resource_deps = new GraphFull<>();
   }
   
   @Override
