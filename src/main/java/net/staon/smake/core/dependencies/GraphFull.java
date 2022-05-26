@@ -44,11 +44,11 @@ public class GraphFull<N> implements Graph<N> {
       ins = new HashSet<>();
     }
     
-    public boolean addOutEdge(NodeImpl target_node_) {
+    private boolean addOutEdge(NodeImpl target_node_) {
       return outs.add(target_node_);
     }
     
-    public void addInEdge(NodeImpl source_node_) {
+    private void addInEdge(NodeImpl source_node_) {
       ins.add(source_node_);
     }
     
@@ -115,5 +115,12 @@ public class GraphFull<N> implements Graph<N> {
     var node_ = nodes.get(node_id_);
     assert node_ != null;
     node_.ins.forEach((n_) -> fn_.accept(n_.id, n_));
+  }
+  
+  @Override
+  public void forEachSuccessor(ID node_id_, BiConsumer<ID, Node<N>> fn_) {
+    var node_ = nodes.get(node_id_);
+    assert node_ != null;
+    node_.outs.forEach((n_) -> fn_.accept(n_.id, n_));
   }
 }

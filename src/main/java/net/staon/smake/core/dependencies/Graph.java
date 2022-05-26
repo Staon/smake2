@@ -84,9 +84,9 @@ public interface Graph<N> {
   /**
    * Evaluate @a fn on every node in the graph
    *
-   * @param fn The evaluation function
+   * @param fn_ The evaluation function
    */
-  void forEachNode(BiConsumer<ID, GraphFull.Node<N>> fn);
+  void forEachNode(BiConsumer<ID, GraphFull.Node<N>> fn_);
   
   /**
    * Evaluate a function on every predecessor of a node
@@ -95,4 +95,12 @@ public interface Graph<N> {
    * @param fn_ The function
    */
   void forEachPredecessor(ID node_id_, BiConsumer<ID, GraphFull.Node<N>> fn_);
+  
+  /**
+   * Evaluate a function on every successor of a node
+   *
+   * @param node_id_ ID of the node
+   * @param fn_ The function
+   */
+  void forEachSuccessor(ID node_id_, BiConsumer<ID, GraphFull.Node<N>> fn_);
 }
