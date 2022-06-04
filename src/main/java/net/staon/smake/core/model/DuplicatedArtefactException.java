@@ -18,7 +18,7 @@
  */
 package net.staon.smake.core.model;
 
-public class DuplicatedArtefactException extends Exception {
+public class DuplicatedArtefactException extends ModelException {
   public DuplicatedArtefactException(Project project_, Artefact artefact_) {
     super(String.format(
       "Artefact %s already exists in the project %s",

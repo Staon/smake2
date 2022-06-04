@@ -32,7 +32,7 @@ public interface Visitor {
   /**
    * Visit block node
    */
-  default void visitBlock(Block block_) throws Throwable {
+  default void visitBlock(ProjectBlock block_) throws Throwable {
   
   }
   

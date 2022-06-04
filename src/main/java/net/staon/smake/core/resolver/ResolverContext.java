@@ -86,7 +86,7 @@ public class ResolverContext {
     private ResolverVisitor visitor;
   
     @Override
-    public void visitBlock(Block block_) throws Throwable {
+    public void visitBlock(ProjectBlock block_) throws Throwable {
       try(var ignored = new ResolverLayerGuard(
           new ResourceResolverLayerSimple())) {
         block_.applyChildren(this);

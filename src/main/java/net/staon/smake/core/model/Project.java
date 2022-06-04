@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Representation of one smake project
  */
-public class Project implements ModelNode {
+public class Project implements ModelNode, ProjectPartContainer {
   private String name;
   private final List<ProjectPart> children;
   
@@ -46,14 +46,6 @@ public class Project implements ModelNode {
     return name;
   }
   
-  /**
-   * Append new child
-   */
-  public void addChild(ProjectPart child_) {
-    assert child_ != null;
-    children.add(child_);
-  }
-  
   @Override
   public void apply(Visitor visitor_) throws Throwable {
     visitor_.visitProject(this);
@@ -64,5 +56,10 @@ public class Project implements ModelNode {
     for(var child_ : children) {
       child_.apply(visitor_);
     }
+  }
+  
+  public void addChild(ProjectPart child_) {
+    assert child_ != null;
+    children.add(child_);
   }
 }

@@ -18,14 +18,17 @@
  */
 package net.staon.smake.core.model;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Builder of ona smake project
+ * Builder of one smake project
  */
 public class ProjectBuilder {
   private final Project project;
+  private final Deque<ProjectPartContainer> blocks;
   private Artefact artefact;
   private final Set<String> artefacts;
   private Set<Path> sources;
@@ -37,6 +40,8 @@ public class ProjectBuilder {
    */
   public ProjectBuilder(String name_) {
     project = new Project(name_);
+    blocks = new ArrayDeque<>();
+    blocks.push(project);
     artefact = null;
     artefacts = new HashSet<>();
     sources = null;
@@ -47,6 +52,14 @@ public class ProjectBuilder {
    */
   public Project getProject() {
     return project;
+  }
+  
+  /**
+   * Open new block inside a project (a new resolver layer)
+   */
+  public void openProjectBlock() {
+    assert artefact == null;
+    blocks.push(new ProjectBlock());
   }
   
   /**
@@ -88,6 +101,19 @@ public class ProjectBuilder {
    */
   public void closeArtefact() {
     assert artefact != null;
+    assert !blocks.isEmpty();
+    
+    blocks.peek().addChild(artefact);
     artefact = null;
+  }
+  
+  /**
+   * Close active project block
+   */
+  public void closeProjectBlock() {
+    assert blocks.peek() != null;
+    var block_ = (ProjectBlock) blocks.pop();
+    assert blocks.peek() != null;
+    blocks.peek().addChild(block_);
   }
 }

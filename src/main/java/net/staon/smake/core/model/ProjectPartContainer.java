@@ -18,12 +18,14 @@
  */
 package net.staon.smake.core.model;
 
-public class DuplicatedSourceException extends ModelException {
-  public DuplicatedSourceException(Project project_, Artefact artefact_, Path path_) {
-    super(String.format(
-      "Source %s already exists in the artefact %s of the project %s",
-      path_,
-      artefact_.getName(),
-      project_.getName()));
-  }
+/**
+ * A generic interface of a container keeping ProjectPart objects
+ */
+public interface ProjectPartContainer {
+  /**
+   * Append new project part
+   *
+   * @param child_ The appended project part
+   */
+  void addChild(ProjectPart child_);
 }

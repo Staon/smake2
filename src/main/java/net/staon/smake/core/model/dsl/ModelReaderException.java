@@ -16,14 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with smake2.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.staon.smake.core.model;
+package net.staon.smake.core.model.dsl;
 
-public class DuplicatedSourceException extends ModelException {
-  public DuplicatedSourceException(Project project_, Artefact artefact_, Path path_) {
-    super(String.format(
-      "Source %s already exists in the artefact %s of the project %s",
-      path_,
-      artefact_.getName(),
-      project_.getName()));
+/**
+ * Generic exception class thrown from the Model reader
+ */
+public class ModelReaderException extends Exception {
+  public ModelReaderException(String message_) {
+    super(message_);
   }
 }

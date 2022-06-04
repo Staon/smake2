@@ -16,14 +16,33 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with smake2.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.staon.smake.core.model;
+package net.staon.smake.core.model.dsl;
 
-public class DuplicatedSourceException extends ModelException {
-  public DuplicatedSourceException(Project project_, Artefact artefact_, Path path_) {
-    super(String.format(
-      "Source %s already exists in the artefact %s of the project %s",
-      path_,
-      artefact_.getName(),
-      project_.getName()));
+import groovy.lang.Closure;
+import net.staon.smake.core.model.ProjectBuilder;
+
+/**
+ * Context of the DSL parser
+ */
+public class Context {
+  private final ModelReader reader;
+  public ProjectBuilder project;
+  
+  /**
+   * Ctor
+   *
+   * @param reader_ Owner model reader
+   */
+  public Context(ModelReader reader_) {
+    reader = reader_;
+  }
+  
+  public void delegateDirectives(
+      Object delegate_,
+      Object owner_,
+      Closure body_) {
+    var code_ = body_.rehydrate(delegate_, owner_, owner_);
+    code_.setResolveStrategy(Closure.DELEGATE_ONLY);
+    code_.run();
   }
 }

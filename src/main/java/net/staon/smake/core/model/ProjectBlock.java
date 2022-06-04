@@ -18,9 +18,6 @@
  */
 package net.staon.smake.core.model;
 
-import net.staon.smake.core.execution.ProductReference;
-import org.checkerframework.checker.units.qual.A;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,13 +28,13 @@ import java.util.List;
  * layer of compilation profiles. A block is automatically opened for
  * subdirectory, but it can be opened manually in the SMakeFile.
  */
-public class Block implements ProjectPart {
+public class ProjectBlock implements ProjectPart, ProjectPartContainer {
   private final List<ProjectPart> children;
   
   /**
    * Ctor
    */
-  public Block() {
+  public ProjectBlock() {
     children = new ArrayList<>();
   }
   
@@ -51,5 +48,10 @@ public class Block implements ProjectPart {
     for(var child_ : children) {
       child_.apply(visitor_);
     }
+  }
+  
+  @Override
+  public void addChild(ProjectPart child_) {
+    children.add(child_);
   }
 }
