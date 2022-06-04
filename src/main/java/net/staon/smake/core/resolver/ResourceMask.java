@@ -18,9 +18,7 @@
  */
 package net.staon.smake.core.resolver;
 
-import net.staon.smake.core.execution.Resource;
 import net.staon.smake.core.execution.ResourceID;
-import net.staon.smake.core.model.Path;
 
 import java.util.regex.Pattern;
 

@@ -19,52 +19,27 @@
 package net.staon.smake.core.resolver;
 
 import net.staon.smake.core.execution.Resource;
-
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Queue;
+import net.staon.smake.core.model.Path;
 
 /**
- * Resource queue
+ * Specification of product resources
  */
-public class ResourceQueue {
-  private final Queue<ResolverResource> queue;
-  
+public interface ProductSpec {
   /**
-   * Ctor - empty queue
+   * Get the resource object
    */
-  public ResourceQueue() {
-    queue = new ArrayDeque<>();
-  }
+  Resource getProductResource();
   
   /**
-   * Ctor - initial content
+   * Get name of product type
    */
-  public ResourceQueue(Collection<ResolverResource> init_) {
-    queue = new ArrayDeque<>(init_);
-  }
+  String getProductType();
   
   /**
-   * Check emptiness of the queue
-   */
-  public boolean isEmpty() {
-    return queue.isEmpty();
-  }
-  
-  /**
-   * Insert resource into the queue
-   */
-  public void pushResource(ResolverResource resource_) {
-    queue.add(resource_);
-  }
-  
-  /**
-   * Remove resource from the head
+   * Mangle path of a resource which belongs to the product
    *
-   * @return The removed resource
+   * @param path_ Original resource path
+   * @return New mangled resource path
    */
-  public ResolverResource popResource() {
-    assert !queue.isEmpty();
-    return queue.poll();
-  }
+  Path mangleResourcePath(Path path_);
 }
