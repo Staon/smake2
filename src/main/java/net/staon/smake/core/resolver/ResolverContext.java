@@ -190,10 +190,17 @@ public class ResolverContext {
     return new ResourcePhysical(TARGET_TYPE, path_, content_type_);
   }
   
-  private void insertResource(Resource resource_) {
-    resource_map.addResource(resource_);
+  private void queueResource(Resource resource_) {
     state.resource_queue.pushResource(
         new ResolverResource(resource_, state.resolver_stack, state.product));
+  }
+  private void insertSharedResource(Resource resource_) {
+    var actual_ = resource_map.getResource(resource_.getID());
+    if(actual_ == null) {
+      actual_ = resource_;
+      resource_map.addResource(actual_);
+    }
+    queueResource(actual_);
   }
   
   private void insertUniqueResource(Resource resource_)
@@ -201,7 +208,8 @@ public class ResolverContext {
     if(resource_map.containsResource(resource_)) {
       throw new DuplicatedResourceException(state.project, resource_);
     }
-    insertResource(resource_);
+    resource_map.addResource(resource_);
+    queueResource(resource_);
   }
   
   /**
@@ -257,10 +265,6 @@ public class ResolverContext {
    */
   public void registerSharedResource(Resource resource_) {
     state.checkStateForResource();
-    var actual_ = resource_map.getResource(resource_.getID());
-    if(actual_ == null) {
-      actual_ = resource_;
-    }
-    insertResource(actual_);
+    insertSharedResource(resource_);
   }
 }
