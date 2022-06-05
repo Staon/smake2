@@ -21,6 +21,7 @@ package net.staon.smake.core.testutils;
 import net.staon.smake.core.assembler.ProjectAssembler;
 import net.staon.smake.core.exception.SMakeException;
 import net.staon.smake.core.resolver.ResolverLayer;
+import net.staon.smake.core.toolchain.ToolchainGroup;
 
 /**
  * A testing runtime
@@ -28,6 +29,7 @@ import net.staon.smake.core.resolver.ResolverLayer;
  * This class construct entire smake environment.
  */
 public class TestRuntime implements AutoCloseable {
+  public final ToolchainGroup toolchain;
   public final ResolverLayer resolver_stack;
   public final ProjectAssembler project_assembler;
   
@@ -44,7 +46,15 @@ public class TestRuntime implements AutoCloseable {
    * @param config_ The configuration object
    */
   public TestRuntime(TestRuntimeConfig config_) throws SMakeException {
-    resolver_stack = createDefaultConfiguration();
+    /* -- construct toolchains according to configuration */
+    toolchain = createDefaultConfiguration();
+    
+    /* -- construct initial resolver stack */
+    resolver_stack = ResolverLayer.createConfigLayer(null);
+    toolchain.constructResolvers(resolver_stack);
+
+    /* -- create project assembler (for direct reader tests, usually
+     *    a project is parsed by repository) */
     project_assembler = new ProjectAssembler(resolver_stack);
   }
   
@@ -53,8 +63,8 @@ public class TestRuntime implements AutoCloseable {
 
   }
   
-  private ResolverLayer createDefaultConfiguration() throws SMakeException {
-    var resolver_stack_ = ResolverLayer.createConfigLayer(null);
-    return resolver_stack_;
+  private ToolchainGroup createDefaultConfiguration() throws SMakeException {
+    var toolchain_ = new ToolchainGroup();
+    return toolchain_;
   }
 }

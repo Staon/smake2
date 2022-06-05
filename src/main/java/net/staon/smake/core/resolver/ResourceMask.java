@@ -20,34 +20,32 @@ package net.staon.smake.core.resolver;
 
 import net.staon.smake.core.execution.ResourceID;
 
-import java.util.regex.Pattern;
-
 public class ResourceMask {
   private final Pattern type;
   private final Pattern path;
   private final Pattern content;
   
   /**
-   * Ctor
+   * Ctor - pattern for file resources
    *
-   * @param type_ Regular expression for resource type
-   * @param path_ Regular expression for resource path
-   * @param content_ Regular expression for content type
+   * @param type_ Pattern for resource type
+   * @param path_ Pattern for resource path
+   * @param content_ Pattern  for content type
    */
-  public ResourceMask(String type_, String path_, String content_) {
-    type = Pattern.compile(type_);
-    path = Pattern.compile(path_);
-    content = Pattern.compile(content_);
+  public ResourceMask(Pattern type_, Pattern path_, Pattern content_) {
+    type = type_;
+    path = path_;
+    content = content_;
   }
   
   /**
-   * Ctor - the content type doesn't matter
+   * Ctor - pattern for non-file resources
    *
-   * @param type_ Regular expression for resource type
-   * @param path_ Regular expression for resource path
+   * @param type_ Pattern for resource type
+   * @param path_ Pattern for path
    */
-  public ResourceMask(String type_, String path_) {
-    this(type_, path_, ".*");
+  public ResourceMask(Pattern type_, Pattern path_) {
+    this(type_, path_, new PatternNull());
   }
   
   /**
@@ -58,9 +56,9 @@ public class ResourceMask {
    * @return True if the resource matches
    */
   boolean matchResource(ResourceID resource_, String content_type_) {
-    return type.matcher(resource_.getType()).matches()
-        && path.matcher(resource_.getPath().asString()).matches()
-        && content.matcher(content_type_).matches();
+    return type.matches(resource_.getType())
+        && path.matches(resource_.getPath().asString())
+        && content.matches(content_type_);
   }
   
   /**
@@ -70,6 +68,6 @@ public class ResourceMask {
    * @return True if the resource matches
    */
   boolean matchResource(ResourceID resource_) {
-    return matchResource(resource_, "");
+    return matchResource(resource_, null);
   }
 }
