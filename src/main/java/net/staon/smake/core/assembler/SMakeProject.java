@@ -16,40 +16,22 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with smake2.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.staon.smake.core.model;
+package net.staon.smake.core.assembler;
 
-import net.staon.smake.core.exception.SMakeException;
+import net.staon.smake.core.execution.ResourceMap;
 
 /**
- * Source file of an artifact
+ * A representation of one SMake project
  */
-public class Source implements ModelNode {
-  private final Path path;
+public class SMakeProject {
+  private final ResourceMap resource_map;
   
   /**
    * Ctor
    *
-   * @param path_ Source path relative to the project root
+   * @param resource_map_ Project's resource map
    */
-  public Source(Path path_) {
-    assert path_ != null;
-    path = path_;
-  }
-  
-  /**
-   * Get source path
-   */
-  public Path getPath() {
-    return path;
-  }
-  
-  @Override
-  public void apply(Visitor visitor_) throws SMakeException {
-    visitor_.visitSource(this);
-  }
-  
-  @Override
-  public void applyChildren(Visitor visitor_) throws SMakeException {
-    /* -- nothing to do, no children */
+  public SMakeProject(ResourceMap resource_map_) {
+    resource_map = resource_map_;
   }
 }

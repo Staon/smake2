@@ -18,6 +18,9 @@
  */
 package net.staon.smake.core.model;
 
+import net.staon.smake.core.exception.DuplicatedArtefactException;
+import net.staon.smake.core.exception.DuplicatedSourceException;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;

@@ -19,6 +19,7 @@
 package net.staon.smake.core.graph.tests;
 
 import net.staon.smake.core.dependencies.*;
+import net.staon.smake.core.exception.DependencyCycleException;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;

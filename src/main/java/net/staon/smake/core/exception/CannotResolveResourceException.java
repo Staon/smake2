@@ -16,11 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with smake2.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.staon.smake.core.resolver;
+package net.staon.smake.core.exception;
 
 import net.staon.smake.core.execution.Resource;
 
-public class CannotResolveResourceException extends Exception {
+/**
+ * The resolver throws this exception if there is no resource resolver
+ * applicable on the resource.
+ */
+public class CannotResolveResourceException extends ResolverException {
   public CannotResolveResourceException(Resource resource_) {
     super(String.format("Cannot resolve resource %s", resource_.getID()));
   }

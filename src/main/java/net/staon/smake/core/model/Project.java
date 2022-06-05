@@ -18,6 +18,8 @@
  */
 package net.staon.smake.core.model;
 
+import net.staon.smake.core.exception.SMakeException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ import java.util.List;
  * Representation of one smake project
  */
 public class Project implements ModelNode, ProjectPartContainer {
-  private String name;
+  private final String name;
   private final List<ProjectPart> children;
   
   
@@ -47,12 +49,12 @@ public class Project implements ModelNode, ProjectPartContainer {
   }
   
   @Override
-  public void apply(Visitor visitor_) throws Throwable {
+  public void apply(Visitor visitor_) throws SMakeException {
     visitor_.visitProject(this);
   }
 
   @Override
-  public void applyChildren(Visitor visitor_) throws Throwable {
+  public void applyChildren(Visitor visitor_) throws SMakeException {
     for(var child_ : children) {
       child_.apply(visitor_);
     }

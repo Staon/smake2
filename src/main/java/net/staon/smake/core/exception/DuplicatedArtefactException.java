@@ -16,8 +16,15 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with smake2.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.staon.smake.core.model;
+package net.staon.smake.core.exception;
 
+import net.staon.smake.core.model.Artefact;
+import net.staon.smake.core.model.Project;
+
+/**
+ * This exception is thrown by the model builder if duplicated artefact
+ * is detected.
+ */
 public class DuplicatedArtefactException extends ModelException {
   public DuplicatedArtefactException(Project project_, Artefact artefact_) {
     super(String.format(

@@ -20,11 +20,8 @@ package net.staon.smake.core.model.dsl;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import groovy.lang.Script;
-import net.staon.smake.core.model.Project;
+import net.staon.smake.core.exception.ParseErrorException;
 import net.staon.smake.core.model.ProjectBuilder;
-
-import java.util.List;
 
 /**
  * Directives of the smake DSL files

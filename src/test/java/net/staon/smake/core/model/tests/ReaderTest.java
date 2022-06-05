@@ -18,40 +18,60 @@
  */
 package net.staon.smake.core.model.tests;
 
+import net.staon.smake.core.exception.SMakeException;
 import net.staon.smake.core.model.dsl.ModelReader;
-import net.staon.smake.core.model.dsl.ModelReaderException;
-import net.staon.smake.core.model.dsl.ParseErrorException;
+import net.staon.smake.core.exception.ModelReaderException;
+import net.staon.smake.core.exception.ParseErrorException;
+import net.staon.smake.core.testutils.TestRuntime;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static com.google.common.truth.Truth.assertThat;
 
+/**
+ * Negative tests of the reader - happy paths are well tested in other
+ * tests.
+ */
 public class ReaderTest {
+  public TestRuntime runtime;
+  
+  @BeforeEach
+  void startUp() throws SMakeException {
+    runtime = new TestRuntime();
+  }
+  
+  @AfterEach
+  void tearDown() throws Exception {
+    runtime.close();
+  }
+  
   @Test
-  public void readerTest() throws ModelReaderException {
-    var reader_ = new ModelReader();
-    var project = reader_.readProject(
-        """
-        project("Hello") {
-          block {
-            artefact("hello", "bin") {
-              sources(
-                "hello.cpp"
-              )
-            }
-          }
-        }
-        """,
-        "test");
-    assertNotNull(project);
-    
+  public void twoProjects() {
     assertThrows(ParseErrorException.class, () -> {
-      reader_.readProject(
+      runtime.project_assembler.assemblyProject(
           """
           project("ProjectA") {
           }
           
           project("ProjectB") {
+          }
+          """,
+          "test");
+    });
+  }
+  
+  @Test
+  public void missingProject() {
+    assertThrows(ParseErrorException.class, () -> {
+      runtime.project_assembler.assemblyProject(
+          """
+          artefact("hello", "bin") {
+            sources(
+              "hello.cpp"
+            )
           }
           """,
           "test");

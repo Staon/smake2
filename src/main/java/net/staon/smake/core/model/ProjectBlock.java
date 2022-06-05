@@ -18,6 +18,8 @@
  */
 package net.staon.smake.core.model;
 
+import net.staon.smake.core.exception.SMakeException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,12 +41,12 @@ public class ProjectBlock implements ProjectPart, ProjectPartContainer {
   }
   
   @Override
-  public void apply(Visitor visitor_) throws Throwable {
+  public void apply(Visitor visitor_) throws SMakeException {
     visitor_.visitBlock(this);
   }
   
   @Override
-  public void applyChildren(Visitor visitor_) throws Throwable {
+  public void applyChildren(Visitor visitor_) throws SMakeException {
     for(var child_ : children) {
       child_.apply(visitor_);
     }

@@ -18,9 +18,9 @@
  */
 package net.staon.smake.core.resolver;
 
+import net.staon.smake.core.exception.CannotResolveArtefactException;
+import net.staon.smake.core.exception.CannotResolveResourceException;
 import net.staon.smake.core.model.Artefact;
-
-import java.util.*;
 
 /**
  * Helper class implementing resolver algorithms

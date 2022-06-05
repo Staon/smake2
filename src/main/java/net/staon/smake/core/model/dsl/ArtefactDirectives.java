@@ -18,9 +18,9 @@
  */
 package net.staon.smake.core.model.dsl;
 
-import net.staon.smake.core.model.InvalidPathException;
+import net.staon.smake.core.exception.ModelReaderException;
+import net.staon.smake.core.exception.ParseErrorException;
 import net.staon.smake.core.model.Path;
-import net.staon.smake.core.model.ProjectBuilder;
 
 /**
  * Directives available in the artefact block

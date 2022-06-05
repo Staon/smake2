@@ -16,13 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with smake2.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.staon.smake.core.model.dsl;
+package net.staon.smake.core.exception;
 
 /**
- * An error during parsing the SMakefile DSL
+ * Common parent of exceptions thrown from the model
  */
-public class ParseErrorException extends ModelReaderException {
-  public ParseErrorException(String message_) {
+public class ModelException extends SMakeException {
+  public ModelException(String message_) {
     super(message_);
   }
 }

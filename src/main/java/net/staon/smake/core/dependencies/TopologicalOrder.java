@@ -18,6 +18,7 @@
  */
 package net.staon.smake.core.dependencies;
 
+import net.staon.smake.core.exception.DependencyCycleException;
 import net.staon.smake.core.heap.BinomialHeap;
 import net.staon.smake.core.heap.Heap;
 

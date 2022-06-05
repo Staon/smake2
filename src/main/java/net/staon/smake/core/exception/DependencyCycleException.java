@@ -16,6 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with SMake2.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.staon.smake.core.dependencies;
-public class DependencyCycleException extends Throwable {
+package net.staon.smake.core.exception;
+
+/**
+ * This exception is thrown by the the topological order calculator
+ * when a cycle is detected.
+ */
+public class DependencyCycleException extends SMakeException {
+  public DependencyCycleException() {
+    super("Detected cycle in dependencies");
+  }
 }

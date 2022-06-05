@@ -18,6 +18,8 @@
  */
 package net.staon.smake.core.resolver;
 
+import net.staon.smake.core.exception.DuplicatedResourceException;
+import net.staon.smake.core.exception.SMakeException;
 import net.staon.smake.core.execution.*;
 import net.staon.smake.core.model.*;
 
@@ -111,14 +113,14 @@ public class ResolverContext {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws SMakeException {
       clean_up.run();
     }
   }
   
   private class ResolverVisitor implements Visitor {
     @Override
-    public void visitProject(Project project_) throws Throwable {
+    public void visitProject(Project project_) throws SMakeException {
       state.openProject(project_);
       try(var ignored = new StateGuard(state::closeProject)) {
         /* -- visit project children (mainly artefacts) */
@@ -133,7 +135,7 @@ public class ResolverContext {
     }
   
     @Override
-    public void visitBlock(ProjectBlock block_) throws Throwable {
+    public void visitBlock(ProjectBlock block_) throws SMakeException {
       state.openProjectBlock();
       try(var ignored = new StateGuard(state::closeProjectBlock)) {
         block_.applyChildren(this);
@@ -141,7 +143,7 @@ public class ResolverContext {
     }
   
     @Override
-    public void visitArtefact(Artefact artefact_) throws Throwable {
+    public void visitArtefact(Artefact artefact_) throws SMakeException {
       state.openArtefact(artefact_);
       try(var ignored = new StateGuard(state::closeArtefact)) {
         /* -- resolve the artefact - children of the artefact are
@@ -151,7 +153,7 @@ public class ResolverContext {
     }
 
     @Override
-    public void visitSource(Source source_) throws Throwable {
+    public void visitSource(Source source_) throws SMakeException {
       var resource_ = createSourceResource(source_.getPath());
       registerSharedResource(resource_);
     }
@@ -217,7 +219,7 @@ public class ResolverContext {
    *
    * @param project_ The project
    */
-  public void resolveProject(Project project_) throws Throwable {
+  public void resolveProject(Project project_) throws SMakeException {
     project_.apply(visitor);
   }
   

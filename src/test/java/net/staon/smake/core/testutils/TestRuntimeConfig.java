@@ -16,13 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with smake2.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.staon.smake.core.model;
+package net.staon.smake.core.testutils;
+
+import java.io.Reader;
 
 /**
- * Common parent of exceptions thrown from the model
+ * Configuration structure of the testing runtime
  */
-public class ModelException extends Exception {
-  public ModelException(String message_) {
-    super(message_);
-  }
+public class TestRuntimeConfig {
 }

@@ -18,11 +18,11 @@
  */
 package net.staon.smake.core.model.dsl;
 
-import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.util.DelegatingScript;
+import net.staon.smake.core.exception.ParseErrorException;
+import net.staon.smake.core.exception.SMakeException;
 import net.staon.smake.core.model.Project;
-import org.checkerframework.checker.units.qual.C;
 import org.codehaus.groovy.control.CompilerConfiguration;
 
 import java.io.Reader;
@@ -54,11 +54,18 @@ public class ModelReader {
    * @return Parsed smake project
    */
   public Project readProject(Reader reader_, String filename_)
-      throws ModelReaderException {
-    var script_ = (DelegatingScript) shell.parse(reader_, filename_);
+      throws SMakeException {
     var context_ = new Context(this);
-    script_.setDelegate(new RootDirectives(context_));
-    script_.run();
+    try {
+      var script_ = (DelegatingScript) shell.parse(reader_, filename_);
+      script_.setDelegate(new RootDirectives(context_));
+      script_.run();
+    }
+    catch(Throwable exc_) {
+      var converted_ = new ParseErrorException(exc_.getMessage());
+      converted_.initCause(exc_);
+      throw converted_;
+    }
     
     if(context_.project == null)
       throw new ParseErrorException("missing project specification");
@@ -73,7 +80,7 @@ public class ModelReader {
    * @return Parsed smake project
    */
   public Project readProject(String content_, String filename_)
-      throws ModelReaderException {
+      throws SMakeException {
     return readProject(new StringReader(content_), filename_);
   }
 }

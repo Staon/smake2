@@ -16,14 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with smake2.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.staon.smake.core.model;
+package net.staon.smake.core.exception;
 
-public class DuplicatedSourceException extends ModelException {
-  public DuplicatedSourceException(Project project_, Artefact artefact_, Path path_) {
-    super(String.format(
-      "Source %s already exists in the artefact %s of the project %s",
-      path_,
-      artefact_.getName(),
-      project_.getName()));
+/**
+ * Invalid path string
+ *
+ * This exception is thrown by the parser of smake path if the string
+ * is not a valid path.
+ */
+public class InvalidPathException extends ModelException {
+  /**
+   * Ctor
+   *
+   * @param path_ The invalid string
+   */
+  public InvalidPathException(String path_) {
+    super(String.format("Invalid path string %s", path_));
   }
 }

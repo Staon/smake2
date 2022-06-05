@@ -18,6 +18,8 @@
  */
 package net.staon.smake.core.model;
 
+import net.staon.smake.core.exception.SMakeException;
+
 /**
  * Visitor of the model structure
  */
@@ -25,28 +27,28 @@ public interface Visitor {
   /**
    * Visit Project node
    */
-  default void visitProject(Project project_) throws Throwable {
+  default void visitProject(Project project_) throws SMakeException {
   
   }
   
   /**
    * Visit block node
    */
-  default void visitBlock(ProjectBlock block_) throws Throwable {
+  default void visitBlock(ProjectBlock block_) throws SMakeException {
   
   }
   
   /**
    * Visit artefact node
    */
-  default void visitArtefact(Artefact artefact_) throws Throwable {
+  default void visitArtefact(Artefact artefact_) throws SMakeException {
   
   }
   
   /**
    * Visit artefact source
    */
-  default void visitSource(Source source_) throws Throwable {
+  default void visitSource(Source source_) throws SMakeException {
   
   }
 }

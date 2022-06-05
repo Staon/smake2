@@ -18,7 +18,7 @@
  */
 package net.staon.smake.core.model.tests;
 
-import net.staon.smake.core.model.InvalidPathException;
+import net.staon.smake.core.exception.InvalidPathException;
 import net.staon.smake.core.model.Path;
 import org.junit.jupiter.api.Test;
 

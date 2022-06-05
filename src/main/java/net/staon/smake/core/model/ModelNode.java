@@ -18,6 +18,8 @@
  */
 package net.staon.smake.core.model;
 
+import net.staon.smake.core.exception.SMakeException;
+
 /**
  * Generic model node
  */
@@ -25,10 +27,10 @@ public interface ModelNode {
   /**
    * Apply visitor on this node
    */
-  void apply(Visitor visitor_) throws Throwable;
+  void apply(Visitor visitor_) throws SMakeException;
   
   /**
    * Apply visitor on each child
    */
-  void applyChildren(Visitor visitor_) throws Throwable;
+  void applyChildren(Visitor visitor_) throws SMakeException;
 }

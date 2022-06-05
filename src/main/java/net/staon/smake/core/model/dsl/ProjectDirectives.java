@@ -20,8 +20,9 @@ package net.staon.smake.core.model.dsl;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
-import net.staon.smake.core.model.ModelException;
-import net.staon.smake.core.model.ProjectBuilder;
+import net.staon.smake.core.exception.ModelException;
+import net.staon.smake.core.exception.ModelReaderException;
+import net.staon.smake.core.exception.ParseErrorException;
 
 /**
  * DSL directives allows inside a project description

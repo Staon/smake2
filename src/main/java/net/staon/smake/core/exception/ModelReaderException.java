@@ -16,40 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with smake2.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.staon.smake.core.model;
-
-import net.staon.smake.core.exception.SMakeException;
+package net.staon.smake.core.exception;
 
 /**
- * Source file of an artifact
+ * Generic exception class thrown from the Model reader
  */
-public class Source implements ModelNode {
-  private final Path path;
-  
-  /**
-   * Ctor
-   *
-   * @param path_ Source path relative to the project root
-   */
-  public Source(Path path_) {
-    assert path_ != null;
-    path = path_;
-  }
-  
-  /**
-   * Get source path
-   */
-  public Path getPath() {
-    return path;
-  }
-  
-  @Override
-  public void apply(Visitor visitor_) throws SMakeException {
-    visitor_.visitSource(this);
-  }
-  
-  @Override
-  public void applyChildren(Visitor visitor_) throws SMakeException {
-    /* -- nothing to do, no children */
+public class ModelReaderException extends ModelException {
+  public ModelReaderException(String message_) {
+    super(message_);
   }
 }

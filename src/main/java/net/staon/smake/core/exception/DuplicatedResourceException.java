@@ -16,12 +16,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with smake2.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.staon.smake.core.resolver;
+package net.staon.smake.core.exception;
 
-import net.staon.smake.core.model.Artefact;
+import net.staon.smake.core.execution.Resource;
+import net.staon.smake.core.model.Project;
 
-public class CannotResolveArtefactException extends Exception {
-  public CannotResolveArtefactException(Artefact artefact_) {
-    super(String.format("Cannot resolve artefact %s", artefact_.getName()));
+/**
+ * This exception is thrown if a resolver tries to add a unique resource
+ * but the resource already exists.
+ */
+public class DuplicatedResourceException extends ResolverException {
+  public DuplicatedResourceException(
+      Project project_, Resource resource_) {
+    super(String.format(
+        "Resource %s is duplicated in the project %s",
+        resource_.getID(),
+        project_.getName()));
   }
 }

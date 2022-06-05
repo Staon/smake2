@@ -18,6 +18,8 @@
  */
 package net.staon.smake.core.model;
 
+import net.staon.smake.core.exception.SMakeException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,12 +68,12 @@ public class Artefact implements ProjectPart {
   }
   
   @Override
-  public void apply(Visitor visitor_) throws Throwable {
+  public void apply(Visitor visitor_) throws SMakeException {
     visitor_.visitArtefact(this);
   }
   
   @Override
-  public void applyChildren(Visitor visitor_) throws Throwable {
+  public void applyChildren(Visitor visitor_) throws SMakeException {
     for(var source_ : sources) {
       source_.apply(visitor_);
     }
